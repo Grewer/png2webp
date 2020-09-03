@@ -1,13 +1,15 @@
 import React from 'react'
-import { Avatar, List } from 'antd'
+import { List, Spin } from 'antd'
 import { IList } from '@/App'
 import { execute } from 'tauri/api/process'
 import getInfoByPath from '@/utils/getInfoByPath'
+import { CheckOutlined } from '@ant-design/icons'
 
 const Item = List.Item, Meta = Item.Meta
 
 interface IProps {
   list: IList
+  quality: number
   setValue: (value: any) => void
 }
 
@@ -16,11 +18,8 @@ interface IState {
 }
 
 function renderItem(item: IList[number]) {
-  return <Item actions={[item.converted ? <span>对勾 icon</span> : <span>loading</span>]}>
+  return <Item actions={[item.converted ? <CheckOutlined/> : <Spin/>]}>
     <Meta
-      avatar={
-        <Avatar shape={'square'} src={`data:image/png;base64,${item.base64}`}/>
-      }
       title={
         <div style={{ width: '100%', wordWrap: 'break-word' }}>
           {item.url}
@@ -53,8 +52,9 @@ class UploadList extends React.Component<IProps, IState> {
         return Promise.resolve()
       }
       console.log('开始转换')
-      const result = await execute('/Users/apple/mybin/libwebp/bin/cwebp', ['-q', '100', path, '-o', `${directory}${name}.webp`, '-mt'])
+      const result = await execute('/Users/apple/mybin/libwebp/bin/cwebp', ['-q', this.props.quality.toString(), path, '-o', `${directory}${name}.webp`, '-mt'])
       item.converted = true
+
       this.setState({
         list: [...this.state.list]
       })
@@ -71,7 +71,7 @@ class UploadList extends React.Component<IProps, IState> {
 
   componentDidUpdate(prevProps: Readonly<IProps>, prevState: IState) {
     if (this.state.list && (prevProps.list !== this.props.list)) {
-      // this.start()
+      this.start()
     }
   }
 

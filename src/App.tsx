@@ -4,12 +4,10 @@ import { Button, message, Slider } from 'antd'
 import { UploadOutlined } from '@ant-design/icons'
 import UploadList from '@/pages/UploadList'
 import { open } from 'tauri/api/dialog'
-import { readBinaryFile } from 'tauri/api/fs'
 
 export type IList = {
   url: string
   converted: boolean
-  base64: string
 }[]
 
 
@@ -19,21 +17,21 @@ export interface IApp {
 }
 
 
-function readImage(url) {
-  return new Promise<string>((resolve, reject) => {
-    if (!url) {
-      return resolve('无 url')
-    }
-    // BinaryFile 转 base64
-    readBinaryFile(url).then(img => {
-      const base64 = Buffer.from(img).toString('base64')
-      resolve(base64)
-    }).catch(err => {
-      reject(err)
-    })
-  })
-}
-
+// function readImage(url) {
+//   return new Promise<string>((resolve, reject) => {
+//     if (!url) {
+//       return resolve('无 url')
+//     }
+//     // BinaryFile 转 base64
+//     readBinaryFile(url).then(img => {
+//       const base64 = Buffer.from(img).toString('base64')
+//       resolve(base64)
+//     }).catch(err => {
+//       reject(err)
+//     })
+//   })
+// }
+//
 
 function App() {
   const [{ list, globalConvert }, setValue]: [IApp, React.Dispatch<React.SetStateAction<IApp>>] = useState({
@@ -41,9 +39,12 @@ function App() {
     globalConvert: false
   } as IApp)
 
+
+  const [quality, setQuality] = useState(75)
+
   const openFiles = useCallback(async () => {
     try {
-      // 只能打开多个文件或者一个文件夹
+      // 只能打开多个文件或者一个文件夹 质量
       // jpg 待解决 已转换
       if (globalConvert) {
         message.info('正在转换中')
@@ -54,18 +55,11 @@ function App() {
         multiple: true,
       }) as string[]
 
-      const base64Arr = await Promise.all(result.map(url => {
-        return readImage(url)
-      }))
-      // 考虑是否需要这个
-      console.log(base64Arr)
-
       setValue({
         list: result.map((url, index) => {
           return {
             url,
             converted: false,
-            base64: base64Arr[index]
           }
         }),
         globalConvert: true
@@ -80,10 +74,11 @@ function App() {
 
   return (
     <div className={styles.App}>
-      <h4>图片质量:</h4>
-      <Slider defaultValue={75} />
+      <h4>图片质量(默认 75):</h4>
+      <Slider onAfterChange={setQuality} defaultValue={75}/>
       <Button className={styles.uploadBtn} onClick={openFiles} icon={<UploadOutlined/>}>选择图片文件</Button>
-      <UploadList list={list} setValue={setValue}/>
+      <div className={styles.tip}>图片转换完毕后会自动保存在原图位置处</div>
+      <UploadList quality={quality} list={list} setValue={setValue}/>
     </div>
   )
 }
