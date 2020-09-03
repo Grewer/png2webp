@@ -48,7 +48,7 @@ function App() {
       // jpg 待解决 已转换
       if (globalConvert) {
         message.info('正在转换中')
-        // return
+        return
       }
       const result = await open({
         filter: 'png',

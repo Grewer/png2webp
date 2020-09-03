@@ -78,12 +78,12 @@ class UploadList extends React.Component<IProps, IState> {
   start = async () => {
     console.log('开始运行')
     await Promise.all(this.state.list.map(this.convert))
-    // setValue(prev => {
-    //   return {
-    //     ...prev,
-    //     globalConvert: false
-    //   }
-    // })
+    this.props.setValue(prev => {
+      return {
+        ...prev,
+        globalConvert: false
+      }
+    })
   }
 
   render() {
