@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Avatar, List } from 'antd'
 import { IList } from '@/App'
+import { execute } from 'tauri/api/process'
+import getInfoByPath from '@/utils/getInfoByPath'
 
 const Item = List.Item, Meta = Item.Meta
 
@@ -9,8 +11,12 @@ interface IProps {
   setValue: (value: any) => void
 }
 
-function renderItem(item) {
-  return <Item actions={[item.loading && <span>loading</span>]}>
+interface IState {
+  list: IList
+}
+
+function renderItem(item: IList[number]) {
+  return <Item actions={[item.converted ? <span>对勾 icon</span> : <span>loading</span>]}>
     <Meta
       avatar={
         <Avatar shape={'square'} src={`data:image/png;base64,${item.base64}`}/>
@@ -24,25 +30,74 @@ function renderItem(item) {
   </Item>
 }
 
-function UploadList(props: IProps) {
-  const { list } = props
-  const [data, setData]: [IList, React.Dispatch<React.SetStateAction<IList>>] = useState([] as IList)
 
-  useEffect(() => {
-    if (list.length) {
-      setData(list)
-      console.log('开始转换')
+class UploadList extends React.Component<IProps, IState> {
+  state = {
+    list: []
+  }
+
+  static getDerivedStateFromProps = (nextProps: IProps, prevState) => {
+    if (nextProps.list) {
+      return {
+        list: nextProps.list
+      }
     }
-  }, [list])
+    return prevState
+  }
 
-  return <List
+  convert = async (item: IList[number]) => {
+    try {
+      const path = item.url
+      const { name, suffix, directory } = getInfoByPath(path)
+      if (suffix !== 'png') {
+        return Promise.resolve()
+      }
+      console.log('开始转换')
+      const result = await execute('/Users/apple/mybin/libwebp/bin/cwebp', ['-q', '100', path, '-o', `${directory}${name}.webp`, '-mt'])
+      item.converted = true
+      this.setState({
+        list: [...this.state.list]
+      })
+      console.log('结果', result)
+      if (result) {
+        alert(result)
+      }
+    } catch (e) {
+      alert(e)
+      console.log(e)
+    }
+  }
+
+
+  componentDidUpdate(prevProps: Readonly<IProps>, prevState: IState) {
+    if (this.state.list && (prevProps.list !== this.props.list)) {
+      // this.start()
+    }
+  }
+
+  start = async () => {
+    console.log('开始运行')
+    await Promise.all(this.state.list.map(this.convert))
+    // setValue(prev => {
+    //   return {
+    //     ...prev,
+    //     globalConvert: false
+    //   }
+    // })
+  }
+
+  render() {
+    console.log(this.state, this.props)
+    const { list } = this.state
+    return <List<IList[number]>
       size="small"
       bordered
       itemLayout="horizontal"
-      dataSource={data}
+      dataSource={list}
       renderItem={renderItem}
       locale={{ emptyText: '请选择图片' }}
     />
+  }
 }
 
 

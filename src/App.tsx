@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import styles from './App.module.less'
-import { Button, message } from 'antd'
+import { Button, message, Slider } from 'antd'
 import { UploadOutlined } from '@ant-design/icons'
 import UploadList from '@/pages/UploadList'
 import { open } from 'tauri/api/dialog'
@@ -9,7 +9,6 @@ import { readBinaryFile } from 'tauri/api/fs'
 export type IList = {
   url: string
   converted: boolean
-  loading: boolean
   base64: string
 }[]
 
@@ -48,7 +47,7 @@ function App() {
       // jpg 待解决 已转换
       if (globalConvert) {
         message.info('正在转换中')
-        return
+        // return
       }
       const result = await open({
         filter: 'png',
@@ -58,7 +57,7 @@ function App() {
       const base64Arr = await Promise.all(result.map(url => {
         return readImage(url)
       }))
-
+      // 考虑是否需要这个
       console.log(base64Arr)
 
       setValue({
@@ -66,7 +65,6 @@ function App() {
           return {
             url,
             converted: false,
-            loading: false,
             base64: base64Arr[index]
           }
         }),
@@ -82,6 +80,8 @@ function App() {
 
   return (
     <div className={styles.App}>
+      <h4>图片质量:</h4>
+      <Slider defaultValue={75} />
       <Button className={styles.uploadBtn} onClick={openFiles} icon={<UploadOutlined/>}>选择图片文件</Button>
       <UploadList list={list} setValue={setValue}/>
     </div>
