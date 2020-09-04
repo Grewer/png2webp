@@ -70,6 +70,7 @@
   "scripts": {
     "dev": "tauri dev",
     "build": "tauri build",
+    "buildDebug": "tauri build --debug",
     "start": "PORT=4000 node scripts/start.js",
     "buildWeb": "node scripts/build.js",
     "test": "node scripts/test.js"

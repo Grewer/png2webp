@@ -51,7 +51,7 @@ class UploadList extends React.Component<IProps, IState> {
       if (suffix !== 'png') {
         return Promise.resolve()
       }
-      // 可以正常运行
+      // 可以正常运行 打包后出问题
       const result = await execute('./bin/cwebp-x86_64-apple-darwin', ['-q', this.props.quality.toString(), path, '-o', `${directory}${name}.webp`, '-mt'])
       item.converted = true
 
