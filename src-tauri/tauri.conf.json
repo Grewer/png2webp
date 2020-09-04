@@ -22,7 +22,9 @@
         "icons/icon.ico"
       ],
       "resources": [],
-      "externalBin": [],
+      "externalBin": [
+        "bin/cwebp"
+      ],
       "copyright": "grewer@grewer.cn",
       "category": "DeveloperTool",
       "shortDescription": "png/jpg 转 webp 工具",

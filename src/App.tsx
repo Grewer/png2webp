@@ -4,6 +4,7 @@ import { Button, message, Slider } from 'antd'
 import { UploadOutlined } from '@ant-design/icons'
 import UploadList from '@/pages/UploadList'
 import { open } from 'tauri/api/dialog'
+import { readDir } from 'tauri/api/fs'
 
 export type IList = {
   url: string
@@ -71,6 +72,14 @@ function App() {
       // message.info('用户取消了选择',1000)
     }
   }, [globalConvert])
+
+  readDir('./', {
+    // dir: 17
+    // dir: 17 // target
+  }).then(res => {
+    console.log(res)
+    // console.log(res.forEach(console.log))
+  })
 
   return (
     <div className={styles.App}>

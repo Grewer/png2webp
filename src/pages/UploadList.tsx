@@ -51,14 +51,14 @@ class UploadList extends React.Component<IProps, IState> {
       if (suffix !== 'png') {
         return Promise.resolve()
       }
-      console.log('开始转换')
-      const result = await execute('/Users/apple/mybin/libwebp/bin/cwebp', ['-q', this.props.quality.toString(), path, '-o', `${directory}${name}.webp`, '-mt'])
+      // 可以正常运行
+      const result = await execute('./bin/cwebp-x86_64-apple-darwin', ['-q', this.props.quality.toString(), path, '-o', `${directory}${name}.webp`, '-mt'])
       item.converted = true
 
       this.setState({
         list: [...this.state.list]
       })
-      console.log('结果', result)
+      console.log('结果1', result)
       if (result) {
         alert(result)
       }
