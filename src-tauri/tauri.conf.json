@@ -23,7 +23,7 @@
       ],
       "resources": [],
       "externalBin": [
-        "bin/cwebp"
+        "./bin/cwebp"
       ],
       "copyright": "grewer@grewer.cn",
       "category": "DeveloperTool",

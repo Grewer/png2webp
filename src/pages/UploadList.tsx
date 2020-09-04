@@ -4,6 +4,7 @@ import { IList } from '@/App'
 import { execute } from 'tauri/api/process'
 import getInfoByPath from '@/utils/getInfoByPath'
 import { CheckOutlined } from '@ant-design/icons'
+import { invoke } from 'tauri/api/tauri'
 
 const Item = List.Item, Meta = Item.Meta
 
@@ -51,8 +52,9 @@ class UploadList extends React.Component<IProps, IState> {
       if (suffix !== 'png') {
         return Promise.resolve()
       }
-      // 可以正常运行 打包后出问题
-      const result = await execute('./bin/cwebp-x86_64-apple-darwin', ['-q', this.props.quality.toString(), path, '-o', `${directory}${name}.webp`, '-mt'])
+      // 可以正常运行 打包后出问题 todo  需要使用 rust 来启动?
+      const result = await execute('cwebp', ['-q', this.props.quality.toString(), path, '-o', `${directory}${name}.webp`, '-mt'])
+
       item.converted = true
 
       this.setState({
