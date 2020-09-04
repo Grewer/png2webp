@@ -23,6 +23,9 @@ const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
 const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin');
 const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
 
+
+const isAnalyze = !!process.env.ANALYZE
+
 const postcssNormalize = require('postcss-normalize');
 
 const appPackageJson = require(paths.appPackageJson);
@@ -132,6 +135,11 @@ module.exports = function(webpackEnv) {
     return loaders;
   };
 
+
+  const drop_console = process.env.REACT_APP_ENV === 'pro'
+  const pure_funcs = process.env.REACT_APP_ENV === 'pro' ? ['console.log'] : []
+
+
   return {
     mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
     // Stop compilation early in production
@@ -224,6 +232,8 @@ module.exports = function(webpackEnv) {
               // Pending further investigation:
               // https://github.com/terser-js/terser/issues/120
               inline: 2,
+              drop_console,
+              pure_funcs,
             },
             mangle: {
               safari10: true,
@@ -265,8 +275,18 @@ module.exports = function(webpackEnv) {
       // https://twitter.com/wSokra/status/969633336732905474
       // https://medium.com/webpack/webpack-4-code-splitting-chunk-graph-and-the-splitchunks-optimization-be739a861366
       splitChunks: {
-        chunks: 'all',
         name: false,
+        cacheGroups: {
+          vendor: {
+            test(chunks) {
+              return /react-dom|moment/.test(chunks.context)
+            },
+            name: 'vendor',
+            priority: 2,
+            chunks: 'initial', // all, async, and initial.
+            reuseExistingChunk: true,
+          },
+        },
       },
       // Keep the runtime chunk separated to enable long term caching
       // https://twitter.com/wSokra/status/969679223278505985
