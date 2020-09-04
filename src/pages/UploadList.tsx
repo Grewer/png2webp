@@ -52,7 +52,8 @@ class UploadList extends React.Component<IProps, IState> {
         return Promise.resolve()
       }
       // 可以正常运行
-      const result = await execute('./bin/cwebp-x86_64-apple-darwin', ['-q', this.props.quality.toString(), path, '-o', `${directory}${name}.webp`, '-mt'])
+      // const result = await execute('./bin/cwebp-x86_64-apple-darwin', ['-q', this.props.quality.toString(), path, '-o', `${directory}${name}.webp`, '-mt'])
+      const result = await execute('./bin/cwebp', ['-q', this.props.quality.toString(), path, '-o', `${directory}${name}.webp`, '-mt'])
       item.converted = true
 
       this.setState({
