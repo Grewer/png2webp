@@ -4,7 +4,6 @@ import { IList } from '@/App'
 import { execute } from 'tauri/api/process'
 import getInfoByPath from '@/utils/getInfoByPath'
 import { CheckOutlined } from '@ant-design/icons'
-import { invoke } from 'tauri/api/tauri'
 
 const Item = List.Item, Meta = Item.Meta
 
@@ -23,7 +22,8 @@ function renderItem(item: IList[number]) {
     <Meta
       title={
         <div style={{ width: '100%', wordWrap: 'break-word' }}>
-          {item.error || item.url}
+          {item.url}
+          {item.error ? `(${item.error})` : null}
         </div>
       }
     />
@@ -55,7 +55,10 @@ class UploadList extends React.Component<IProps, IState> {
       // 可以正常运行 打包后出问题 todo  需要使用 rust 来启动?
       console.log('开始转换', path, name, directory)
 
-      const result = await execute('cwebp', ['-q', this.props.quality.toString(), path, '-o', `${directory}${name}.webp`, '-mt'])
+      // const command = Command.sidecar('my-sidecar')
+      const arg = ['-q', this.props.quality.toString(), path, '-o', `${directory}${name}.webp`, '-mt']
+
+      const result = await execute('bin/cwebp-x86_64-apple-darwin', arg)
 
       item.converted = true
 

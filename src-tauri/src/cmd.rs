@@ -7,11 +7,4 @@ pub enum Cmd {
   // multiple arguments are allowed
   // note that rename_all = "camelCase": you need to use "myCustomCommand" on JS
   MyCustomCommand { argument: String },
-//   Cwebp { argument: Vec<String> }
-  Cwebp { argument: String }
-//    Cwebp {
-//       payload: Vec<String>,
-//       callback: String,
-//       error: String,
-//     },
 }

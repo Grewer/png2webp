@@ -20,9 +20,6 @@ fn main() {
               //  your command code
               println!("{}", argument);
             }
-            Cwebp { argument } => {
-              println!("{}", argument);
-            }
           }
           Ok(())
         }

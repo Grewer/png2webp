@@ -13,7 +13,7 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "cn.grewer.dev",
+      "identifier": "com.grewre.dev",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -23,12 +23,12 @@
       ],
       "resources": [],
       "externalBin": [
-        "./bin/cwebp"
+        "bin/cwebp"
       ],
       "copyright": "grewer@grewer.cn",
       "category": "DeveloperTool",
-      "shortDescription": "png/jpg 转 webp 工具",
-      "longDescription": "包装了谷歌的方法,png/jpg 转 webp 的 pc 工具",
+      "shortDescription": "",
+      "longDescription": "",
       "deb": {
         "depends": [],
         "useBootstrapper": false
