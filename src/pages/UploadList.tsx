@@ -1,9 +1,9 @@
 import React from 'react'
 import { List, Spin } from 'antd'
 import { IList } from '@/App'
-import { execute } from 'tauri/api/process'
 import getInfoByPath from '@/utils/getInfoByPath'
 import { CheckOutlined } from '@ant-design/icons'
+import { Command } from '@tauri-apps/api/shell'
 
 const Item = List.Item, Meta = Item.Meta
 
@@ -16,6 +16,7 @@ interface IProps {
 interface IState {
   list: IList
 }
+
 
 function renderItem(item: IList[number]) {
   return <Item actions={[item.converted ? <CheckOutlined/> : (item.error ? '' : <Spin/>)]}>
@@ -58,14 +59,16 @@ class UploadList extends React.Component<IProps, IState> {
       // const command = Command.sidecar('my-sidecar')
       const arg = ['-q', this.props.quality.toString(), path, '-o', `${directory}${name}.webp`, '-mt']
 
-      const result = await execute('bin/cwebp-x86_64-apple-darwin', arg)
+      const command = new Command('./cwebp-x86_64-apple-darwin', arg)
+
+      const result = await command.execute()
 
       item.converted = true
 
       this.setState({
         list: [...this.state.list]
       })
-      console.log('结果1', result)
+      console.log('结果 execute', result)
       if (result) {
         alert(result)
       }
