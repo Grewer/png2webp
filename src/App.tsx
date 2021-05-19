@@ -8,6 +8,7 @@ import { open } from 'tauri/api/dialog'
 export type IList = {
   url: string
   converted: boolean
+  error?: string
 }[]
 
 
@@ -23,12 +24,12 @@ export interface IApp {
 //       return resolve('无 url')
 //     }
 //     // BinaryFile 转 base64
-//     readBinaryFile(url).then(img => {
-//       const base64 = Buffer.from(img).toString('base64')
-//       resolve(base64)
-//     }).catch(err => {
-//       reject(err)
-//     })
+    // readBinaryFile(url).then(img => {
+    //   const base64 = Buffer.from(img).toString('base64')
+    //   resolve(base64)
+    // }).catch(err => {
+    //   reject(err)
+    // })
 //   })
 // }
 //
@@ -44,7 +45,7 @@ function App() {
 
   const openFiles = useCallback(async () => {
     try {
-      // 只能打开多个文件或者一个文件夹 质量
+      // 只能打开多个文件或者一个文件夹
       // jpg 待解决 已转换
       if (globalConvert) {
         message.info('正在转换中')

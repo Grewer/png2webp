@@ -19,11 +19,11 @@ interface IState {
 }
 
 function renderItem(item: IList[number]) {
-  return <Item actions={[item.converted ? <CheckOutlined/> : <Spin/>]}>
+  return <Item actions={[item.converted ? <CheckOutlined/> : (item.error ? '' : <Spin/>)]}>
     <Meta
       title={
         <div style={{ width: '100%', wordWrap: 'break-word' }}>
-          {item.url}
+          {item.error || item.url}
         </div>
       }
     />
@@ -53,6 +53,8 @@ class UploadList extends React.Component<IProps, IState> {
         return Promise.resolve()
       }
       // 可以正常运行 打包后出问题 todo  需要使用 rust 来启动?
+      console.log('开始转换', path, name, directory)
+
       const result = await execute('cwebp', ['-q', this.props.quality.toString(), path, '-o', `${directory}${name}.webp`, '-mt'])
 
       item.converted = true
@@ -65,7 +67,10 @@ class UploadList extends React.Component<IProps, IState> {
         alert(result)
       }
     } catch (e) {
-      alert(e)
+      item.error = e
+      this.setState({
+        list: [...this.state.list]
+      })
       console.log(e)
     }
   }
